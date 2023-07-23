@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("static/builtin/login background.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        h2 {
+            text-align: center;
+            color: #000;
+            position: relative;
+            z-index: 1;
+        }
+
+        h2:before {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 5px;
+            z-index: -1;
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .error-message::before {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.5);
+            z-index: -1;
+            border-radius: 5px;
+        }
+
+        /* New CSS styles for the notification */
+        .notification {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .notification .close-btn {
+            color: #721c24;
+            text-decoration: none;
+            float: right;
+            font-weight: bold;
+        }
+
+        form {
+            width: 300px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px)
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #000;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        p.login-link {
+            text-align: center;
+            margin-top: 15px;
+            color: #000;
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        p.login-link a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .logo {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .logo img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+
+        .signup-container {
+            width: 300px;
+            margin: 0 auto;
+            animation: fade-in 1s ease-in-out;
+        }
+
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2><b>CREATE AN ACCOUNT</b></h2>
+    {% if error %}
+        <div class="notification">
+            <p>{{ error }}</p>
+            <a href="/" class="close-btn">Close</a>
+        </div>
+    {% endif %}
+    <form method="POST" action="/signup">
+        <label for="username"><b>Username:</b></label>
+        <input type="text" id="username" name="username" placeholder="Enter your username" required><br><br>
+        <label for="password"><b>Password:</b></label>
+        <input type="password" id="password" name="password"  placeholder="At least 8 characters" required><br><br>
+        <input type="submit" value="Signup">
+    </form>
+    <div class="signup-container">
+        <p class="login-link"><b>Already have an account?</b> <a href="/"><b><u>LOGIN</u></b></a></p>
+    </div>
+    <div class="logo">
+        <img src="static/builtin/aringay logo.jpg">
+    </div>
+</body>
+</html>

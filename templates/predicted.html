@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MANGROVES DETECTED!</title>
+</head>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-repeat:no-repeat;
+        background-attached:fixed;
+        background-size:cover;
+        background-image:url({{url_for('static',filename='builtin/wallpaper.jpg')}});
+    }
+    h1 {
+        font-size: 2.5rem;
+        margin: 1rem 1rem 0.5rem;
+    }
+    form {
+        margin: 0 1rem 1rem;
+    }
+    input[type=file] {
+        display: block;
+        margin: 0.5rem 0;
+        font-size: 1rem;
+        padding: 0.5rem;
+    }
+    button[type=submit] {
+        display: block;
+        margin: 0.5rem 0;
+        font-size: 1rem;
+        padding: 0.5rem;
+        background-color: #222;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+    }
+    h2 {
+        font-size: 1.5rem;
+        margin: 1rem 0.5rem 0.5rem;
+    }
+    img {
+        display: block;
+        margin: 0.5rem auto;
+        max-width: 100%;
+    }
+</style>
+<body>
+    <h1>MANGROVES DETECTED!</h1>
+    <img src="{{ url_for('static', filename='uploads/' + image_file) }}" alt="MANGROVES DETECTED">
+    <form method="POST" enctype="multipart/form-data">
+        <input type="submit" value="Compare">
+    </form>
+
+    <script>
+        // Get the value of white_area from the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const whiteArea = urlParams.get('w_area');
+
+        // Calculate the percentage and update the page content
+        //const whiteAreaPercentage = parseFloat(whiteArea) * 1;
+        //const mangroveAreaElement = document.createElement('h2');
+        //mangroveAreaElement.textContent = `Mangrove area is ${whiteAreaPercentage}%`;
+        //document.body.appendChild(mangroveAreaElement);
+    </script>
+</body>
+</html>

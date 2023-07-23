@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup Success</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        .notification {
+            width: 300px;
+            margin: 20px auto;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification p {
+            margin: 0;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .notification strong {
+            font-weight: bold;
+        }
+
+        .signup-container {
+            width: 300px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .signup-container .login-link {
+            margin-top: 15px;
+            color: #000;
+        }
+
+        .signup-container .login-link a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .logo {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .logo img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="notification">
+        <h2><b>CONGRATULATIONS!</b></h2>
+        <p>Account has been successfully created! You are now registered as <strong>{{ username }}</strong>.</p>
+    </div>
+    <div class="signup-container">
+        <p class="login-link"><b>Already have an account?</b> <a href="/"><b><u>LOGIN</u></b></a></p>
+    </div>
+    <div class="logo">
+        <img src="static/builtin/aringay logo.jpg">
+    </div>
+</body>
+</html>

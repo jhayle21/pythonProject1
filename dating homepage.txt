@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bakawan</title>
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+            background-repeat:no-repeat;
+            background-attached:fixed;
+            background-size:cover;
+            background-image:url({{url_for('static',filename='builtin/qq.jpg')}});
+            font-size: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 30px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    p {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    input[type=submit] {
+        background-color: #4dc3ff;
+        border: none;
+        color: #fff;
+        padding: 16px 32px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .transparent-box {
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .transparent-box p {
+        color: #fff;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="transparent-box">
+            <p>Mangroves are salt-tolerant trees or shrubs that grow in coastal intertidal zones, brackish water, and estuarine environments. They form dense, complex ecosystems that provide numerous benefits to both marine and terrestrial environments.</p>
+        </div>
+        <form action="index">
+            <input type="submit" value="Let's get started">
+        </form>
+    </div>
+</body>
+</html>

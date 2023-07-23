@@ -1,0 +1,322 @@
+from flask import Flask, render_template, request, redirect, url_for
+from roboflow import Roboflow
+from PIL import Image
+import os
+import shutil
+import numpy as np
+from werkzeug.utils import secure_filename
+import cv2
+from matplotlib import pyplot as plt
+
+app = Flask(__name__)
+
+rf = Roboflow(api_key="ZQL02CEemrLEUVRBugfz")
+project = rf.workspace("mangroves-detection").project("bakawan-patrol-v.3-flgtt")
+model = project.version(2).model
+
+
+# new_size = (256, 256)
+# final_resize = (1920, 1080)
+
+
+class ImagePredictor:
+    def __init__(self, model, standard=(3840, 2160), new_size=(256, 256), final_resize=(1920, 1080)):
+        self.model = model
+        self.standard = standard
+        self.new_size = new_size
+        self.final_resize = final_resize
+
+    def predict(self, input_file_path, output_file_path):
+        # open the image to be predicted
+        image = Image.open(input_file_path)
+
+        # resizing the image
+        resized_image = image.resize(self.new_size)
+        # saving the resized image to be accessed later
+        resized_image.save('Bakawan-1/Resize/Bakawan-1-2.jpg')
+
+        # the resized image goes through the model
+        predicted = self.model.predict('Bakawan-1/Resize/Bakawan-1-2.jpg')
+        # the predicted image get saved
+        predicted.save(output_file_path)
+
+        # opening the predicted image
+        predicted_image = Image.open(output_file_path)
+        # resizing the predicted image
+        final_resized_image = predicted_image.resize(self.final_resize)
+        # saving the predicted image
+        final_resized_image.save('Bakawan-1/Detection_segmentation/Prediction_Bakawan-1.jpg')
+
+
+class ImageComparator:
+    def __init__(self, model, standard=(3840, 2160), new_size=(256, 256), final_resize=(1920, 1080)):
+        self.model = model
+        self.standard = standard
+        self.new_size = new_size
+        self.final_resize = final_resize
+
+    def predict(self, input_file_path, output_file_path):
+        # open the image to be predicted
+        image = Image.open(input_file_path)
+
+        # resizing the image
+        resized_image = image.resize(self.new_size)
+        # saving the resized image to be accessed later
+        resized_image.save('Bakawan-2/Resize/Bakawan-2-2.jpg')
+
+        # the resized image goes through the model
+        predicted = self.model.predict('Bakawan-2/Resize/Bakawan-2-2.jpg')
+        # the predicted image get saved
+        predicted.save(output_file_path)
+
+        # opening the predicted image
+        predicted_image = Image.open(output_file_path)
+        # resizing the predicted image
+        final_resized_image = predicted_image.resize(self.final_resize)
+        # saving the predicted image
+        final_resized_image.save('Bakawan-2/Detection_segmentation/Prediction_Bakawan-2.jpg')
+
+
+# convert the image to black and white
+class ImageConverter:
+    def __init__(self, image_path):
+        self.image_path = image_path
+        self.img = Image.open(self.image_path)
+        self.gray_img = self.img.convert('L')
+        self.gray_array = np.array(self.gray_img)
+        self.height, self.width = self.gray_array.shape
+
+    def convert_to_bw(self):
+        bw_array = np.zeros((self.height, self.width), dtype=np.uint8)
+        bw_array[self.gray_array > 127] = 255
+        bw_img = Image.fromarray(bw_array)
+        bw_img.save('Bakawan-1/B&W/Bakawan-1b&w.jpg')
+
+
+# convert the image to black and white
+class ImageConverter_2:
+    def __init__(self, image_path):
+        self.image_path = image_path
+        self.img = Image.open(self.image_path)
+        self.gray_img = self.img.convert('L')
+        self.gray_array = np.array(self.gray_img)
+        self.height, self.width = self.gray_array.shape
+
+    def convert_to_bw(self):
+        bw_array = np.zeros((self.height, self.width), dtype=np.uint8)
+        bw_array[self.gray_array > 127] = 255
+        bw_img = Image.fromarray(bw_array)
+        bw_img.save('Bakawan-2/B&W/Bakawan-2b&w.jpg')
+
+
+# count the white pixels in an image
+class ImageAnalyzer:
+    def __init__(self, image_path):
+        self.image_path = image_path
+
+        # Open the image file and resize
+        self.new_size = (256, 256)
+        self.img = Image.open(self.image_path)
+        self.image = self.img.resize(self.new_size)
+
+    def analyze_white_area(self):
+        # Convert the image to a NumPy array
+        img_arr = np.array(self.image)
+
+        # Threshold the image to create a binary image
+        white_lower = 1
+        white_upper = 255
+        binary_img = np.where((img_arr >= white_lower) & (img_arr <= white_upper), 1, 0)
+
+        # Count the number of white pixels in the binary image
+        num_white_pixels = np.sum(binary_img)
+
+        print("Number of white pixels: {}".format(num_white_pixels))
+
+        return num_white_pixels
+
+    def save_image(self, output_path):
+        self.image.save(output_path)
+        print("Image saved successfully at: {}".format(output_path))
+
+
+
+class MangroveComparator:
+    def __init__(self, image1_path, image2_path):
+        self.image1_path = image1_path
+        self.image2_path = image2_path
+
+    def compare_images(self):
+        # Load images using OpenCV
+        image1 = cv2.imread(self.image1_path)
+        image2 = cv2.imread(self.image2_path)
+
+        # Check the sizes of the images
+        if image1.shape[0] < image2.shape[0] or image1.shape[1] < image2.shape[1]:
+            # Swap image1 and image2 if image1 is smaller
+            image1, image2 = image2, image1
+
+        # Convert images to grayscale
+        gray_image1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+        gray_image2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+
+        # Create SIFT object
+        sift = cv2.SIFT_create()
+
+        # Detect and compute keypoints and descriptors
+        keypoints1, descriptors1 = sift.detectAndCompute(gray_image1, None)
+        keypoints2, descriptors2 = sift.detectAndCompute(gray_image2, None)
+
+        # Create FLANN Matcher object
+        matcher = cv2.FlannBasedMatcher()
+
+        # Perform KNN matching
+        matches = matcher.knnMatch(descriptors1, descriptors2, k=2)
+
+        # Filter good matches using the Lowe's ratio test
+        good_matches = []
+        for match1, match2 in matches:
+            if match1.distance < 0.75 * match2.distance:
+                good_matches.append(match1)
+
+        # Estimate homography
+        src_pts = np.float32([keypoints1[match.queryIdx].pt for match in good_matches]).reshape(-1, 1, 2)
+        dst_pts = np.float32([keypoints2[match.trainIdx].pt for match in good_matches]).reshape(-1, 1, 2)
+        homography, _ = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC)
+
+        # Warp image1 to image2 using the estimated homography
+        warped_image1 = cv2.warpPerspective(image1, homography, (image2.shape[1], image2.shape[0]))
+
+        # Compute similarity score
+        similarity = self.compute_similarity(image2, warped_image1)
+
+        # Display the images and similarity score
+        plt.figure(figsize=(12, 6))
+        plt.subplot(121), plt.imshow(cv2.cvtColor(image1, cv2.COLOR_BGR2RGB)), plt.title('Mangroves Before')
+        plt.subplot(122), plt.imshow(cv2.cvtColor(warped_image1, cv2.COLOR_BGR2RGB)), plt.title(
+            f'Mangroves After\nSimilarity: {similarity:.2f}%')
+        plt.show()
+
+    def compute_similarity(self, image1, image2):
+        # Convert images to grayscale
+        gray_image1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+        gray_image2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+
+        # Compute the Structural Similarity Index (SSIM)
+        ssim = cv2.matchTemplate(gray_image1, gray_image2, cv2.TM_CCOEFF_NORMED)
+
+        # Normalize the similarity score between 0 and 1
+        similarity = (ssim[0][0] + 1) / 2
+
+        return similarity
+
+
+# Example usage
+image1_path = 'photoshop test/4444.jpg'
+image2_path = 'photoshop test/4test1.jpg'
+
+comparator = MangroveComparator(image1_path, image2_path)
+comparator.compare_images()
+
+
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+
+@app.route('/index', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        # Get the uploaded file
+        file = request.files['file']
+
+        # Save the file to the server
+        input_file = os.path.join('static/uploads', file.filename)
+        file.save(input_file)
+
+        predictor = ImagePredictor(model)
+        predictor.predict(input_file, 'Bakawan-1/Prediction/Predicted-Bakawan-1.jpg')
+        # convert to b&w
+        converter = ImageConverter('Bakawan-1/Detection_segmentation/Prediction_Bakawan-1.jpg')
+        converter.convert_to_bw()
+        # analyze white area
+        analyzer = ImageAnalyzer('Bakawan-1/B&W/Bakawan-1b&w.jpg')
+        white_area = analyzer.analyze_white_area()
+        white = (white_area / (256 * 256))*100
+        formatted_percentage = "{:.0f}".format(white)
+
+        # Code snippet to move files
+        # Specify the source file path
+        source_file = 'Bakawan-1/Detection_segmentation/Prediction_Bakawan-1.jpg'
+
+        # Specify the destination file path
+        destination_file = 'static/uploads/Prediction_Bakawan-1.jpg'
+
+        # Transfer the file to the destination directory
+        shutil.copyfile(source_file, destination_file)
+
+        # Optionally, remove the source file
+        os.remove(source_file)
+
+        # Redirect to the predicted image page
+        return redirect(url_for('predicted_image', filename='Prediction_Bakawan-1.jpg', w_area=formatted_percentage))
+    else:
+        return render_template('index.html')
+
+
+@app.route('/predicted/<filename>', methods=['GET', 'POST'])
+def predicted_image(filename):
+    if request.method == 'POST':
+        return redirect(url_for('compare_image'))
+    return render_template('predicted.html', image_file=filename)
+
+
+@app.route('/compare', methods=['GET', 'POST'])
+def compare_image():
+    if request.method == 'POST':
+        f1 = request.files['file1']
+        f2 = request.files['file2']
+
+        f1_path = 'static/images/' + secure_filename(f1.filename)
+        f2_path = 'static/images/' + secure_filename(f2.filename)
+
+        f1.save(f1_path)
+
+        predictor = ImagePredictor(model)
+        predictor.predict(f1_path, 'Bakawan-1/Prediction/Predicted-Bakawan-1.jpg')
+        # convert to b&w
+        converter = ImageConverter('Bakawan-1/Detection_segmentation/Prediction_Bakawan-1.jpg')
+        converter.convert_to_bw()
+        # analyze white area
+        analyzer = ImageAnalyzer('Bakawan-1/B&W/Bakawan-1b&w.jpg')
+        white_area = analyzer.analyze_white_area()
+
+        f2.save(f2_path)
+        comparator = ImageComparator(model)
+        comparator.predict(f2_path, 'Bakawan-2/Prediction/Predicted-Bakawan-2.jpg')
+
+        # convert to b&w
+        converter2 = ImageConverter_2('Bakawan-2/Detection_segmentation/Prediction_Bakawan-2.jpg')
+        converter2.convert_to_bw()
+
+        analyzer_2 = ImageAnalyzer('Bakawan-2/B&W/Bakawan-2b&w.jpg')
+        white_area_2 = analyzer_2.analyze_white_area()
+
+        result_alert = ''
+
+        if white_area > white_area_2:
+            result_alert = 'Alert! The mangrove forest has experienced a significant decrease in size or density between the two time periods.'
+            suggestion = 'Investigate the potential causes of the decline, such as deforestation, climate change, or human activities, and take necessary actions to address them.'
+        elif white_area < white_area_2:
+            result_alert = 'Mangrove growth is detected! The mangrove forest has experienced a significant increase in size or density between the two time periods.'
+            suggestion = 'Consider implementing measures to protect the newly established mangrove areas from potential threats, such as pollution, coastal development, or unsustainable fishing practices.'
+        else:
+            result_alert = 'Nothing has changed! There is no significant difference in the mangrove forest between the two images.'
+            suggestion = 'Continue monitoring the mangrove forest to detect any potential changes in the future.'
+
+        return render_template('result.html', result1=result_alert, suggestion1=suggestion, file1=f1_path, file2=f2_path)
+    return render_template('compare_image.html')
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)

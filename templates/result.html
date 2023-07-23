@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mangrove Growth Detector - Result</title>
+    <style>
+        /* Popup box styles */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #F1F449;
+            color: black;
+            padding: 20px;
+            max-width: 400px;
+            border-radius: 5px;
+            z-index: 9999;
+            display: none;
+        }
+
+        .popup-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Dim background when popup is open */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8); /* White background with opacity */
+            backdrop-filter: blur(5px); /* Apply the blur effect */
+            z-index: 9998;
+            display: none;
+        }
+
+        /* Set equal size for the images */
+        .result-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        /* Container for the boxes */
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        /* Left box */
+        .left-box {
+            flex-basis: 48%;
+            color: black;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        /* Right box */
+        .right-box {
+            flex-basis: 48%;
+            color: black;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        /* Add the following styles to set the background image */
+        body {
+            background-image: url('static/builtin/mangrove-on-the-sandy-beach-.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        /* Center the title */
+        h1 {
+            text-align: center;
+        }
+
+        /* Center the "Show Result" button */
+        .show-result-button {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+
+        /* Menu styles */
+        .menu {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .menu-button {
+            background-color: transparent;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #333;
+            padding: 0.5rem;
+            border-radius: 5px;
+            z-index: 1;
+        }
+
+        .dropdown a {
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .menu-button:focus + .dropdown,
+        .dropdown:focus,
+        .dropdown:hover {
+            display: block;
+        }
+
+        /* Center the back button */
+        .back-button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* Back button */
+        .back-button {
+            border-radius: 5px;
+            padding: 5px;
+            background-color: #fff;
+            color: black;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function openPopup() {
+            // Get the popup and overlay elements
+            var popup = document.getElementById("popup");
+            var overlay = document.getElementById("overlay");
+
+            // Display the popup and overlay
+            popup.style.display = "block";
+            overlay.style.display = "block";
+        }
+
+        function closePopup() {
+            // Get the popup and overlay elements
+            var popup = document.getElementById("popup");
+            var overlay = document.getElementById("overlay");
+
+            // Hide the popup and overlay
+            popup.style.display = "none";
+            overlay.style.display = "none";
+        }
+    </script>
+</head>
+<body>
+    <div class="menu">
+        <button class="menu-button">Menu &#9660;</button>
+        <div class="dropdown">
+            <a href="/home">Home</a>
+            <a href="/compare">Mangrove Growth Detector</a>
+            <a href="/index">Mapping Mangroves</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    <h1>Mangrove Growth Detector - Result</h1>
+
+    <div class="show-result-button">
+        <button onclick="openPopup()" style="border-radius: 5px; padding: 5px;">Show Result</button>
+    </div>
+
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span class="close-button" onclick="closePopup()">X</span>
+            <p><b>Result:</b> {{ result1 }}</p>
+            <p><b>Suggestion:</b> {{ suggestion1 }}</p>
+        </div>
+    </div>
+
+    <div id="overlay" class="overlay"></div>
+
+    <div class="container">
+        <div class="left-box">
+            <h2>Image 1</h2>
+            <img class="result-image" src="{{ file1 }}" alt="Image 1">
+        </div>
+
+        <div class="right-box">
+            <h2>Image 2</h2>
+            <img class="result-image" src="{{ file2 }}" alt="Image 2">
+        </div>
+    </div>
+
+    <div class="back-button-container">
+        <button class="back-button" onclick="window.location.href='/compare'">Back to Mangrove Growth Detector</button>
+    </div>
+</body>
+</html>

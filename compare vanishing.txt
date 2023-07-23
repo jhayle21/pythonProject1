@@ -1,0 +1,58 @@
+compare that show compare button and image inserted
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Compare</title>
+    <style>
+        body {
+            text-align: center;
+            background-image: url('static/builtin/mangrove-on-the-sandy-beach-.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        form {
+            display: inline-block;
+            margin-top: 50px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input[type="submit"] {
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        function checkImageInputs() {
+            var file1 = document.getElementById('file1').value;
+            var file2 = document.getElementById('file2').value;
+
+            var compareButton = document.getElementById('compareBtn');
+            compareButton.style.display = (file1 && file2) ? 'inline-block' : 'none';
+
+            // Display the inserted images
+            var img1 = document.getElementById('img1');
+            img1.src = file1 ? URL.createObjectURL(event.target.files[0]) : '';
+
+            var img2 = document.getElementById('img2');
+            img2.src = file2 ? URL.createObjectURL(event.target.files[0]) : '';
+        }
+    </script>
+</head>
+<body>
+    <h1>Mangrove Growth Detector</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        <label for="file1">Image 1:</label>
+        <input type="file" id="file1" name="file1" onchange="checkImageInputs()"><br>
+        <img id="img1" src="" alt="Image 1" style="max-width: 300px;"><br>
+
+        <label for="file2">Image 2:</label>
+        <input type="file" id="file2" name="file2" onchange="checkImageInputs()"><br>
+        <img id="img2" src="" alt="Image 2" style="max-width: 300px;"><br>
+
+        <input type="submit" id="compareBtn" value="Compare" style="display: none;">
+    </form>
+</body>
+</html>

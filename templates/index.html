@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MANGROVE DETECTION WEBSITE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-repeat: no-repeat;
+            background-attached: fixed;
+            background-size: cover;
+            background-image: url({{url_for('static',filename='builtin/wallpaper.jpg')}});
+            font-size: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 1rem 1rem 0.5rem;
+            border-radius: 10px; /* Rounded border */
+            padding: 0.5rem 1rem; /* Add padding to give it some space */
+            background-color: #F1F449;
+            color: black;
+        }
+
+        form {
+            margin: 0 1rem 1rem;
+        }
+
+        input[type=file] {
+            display: block;
+            margin: 0.5rem 0;
+            font-size: 1rem;
+            padding: 0.5rem;
+        }
+
+        button[type=submit] {
+            display: none; /* Hide the button by default */
+            margin: 0.5rem 0;
+            font-size: 1rem;
+            padding: 0.5rem;
+            background-color: #222;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 1rem 0.5rem 0.5rem;
+        }
+
+        img {
+            display: block;
+            margin: 0.5rem auto;
+            max-width: 100%;
+        }
+
+        /* Loading screen styles */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            display: none; /* Hide the overlay by default */
+        }
+
+        .overlay img {
+            max-width: 200px;
+        }
+
+        .overlay h2 {
+            color: #fff;
+            margin-left: 10px;
+        }
+
+        /* Menu styles */
+        .menu {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .menu-button {
+            background-color: transparent;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #333;
+            padding: 0.5rem;
+            border-radius: 5px;
+            z-index: 1;
+        }
+
+        .dropdown a {
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .menu-button:focus + .dropdown,
+        .dropdown:focus,
+        .dropdown:hover {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <button class="menu-button">Menu &#9660;</button>
+        <div class="dropdown">
+            <a href="/home">Home</a>
+            <a href="/compare">Mangrove Growth Detector</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    <h1>BAKAWAN PATROL</h1>
+    <form method="POST" enctype="multipart/form-data" onsubmit="showLoadingScreen()">
+        <input type="file" name="file">
+        <br><br>
+        <img id="preview" style="max-width: 400px; max-height: 400px;">
+        <br><br>
+        <button id="detectButton" type="submit">Detect Mangroves:</button> <!-- Added an ID to the button -->
+    </form>
+    <div class="overlay">
+        <img src="static/builtin/GIF2.gif" alt="Loading...">
+    </div>
+    <script>
+        const preview = document.querySelector('#preview');
+        const fileInput = document.querySelector('input[type="file"]');
+        const detectButton = document.querySelector('#detectButton');
+        const overlay = document.querySelector('.overlay');
+
+        fileInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.addEventListener('load', function () {
+                    preview.src = reader.result;
+                    detectButton.style.display = 'block'; // Show the button when an image is inserted
+                });
+                reader.readAsDataURL(file);
+            } else {
+                detectButton.style.display = 'none'; // Hide the button when no image is inserted
+            }
+        });
+
+        function showLoadingScreen() {
+            overlay.style.display = 'flex'; // Show the loading overlay
+        }
+    </script>
+</body>
+</html>
